@@ -18,7 +18,7 @@ variable "PATH_TO_PUBLIC_KEY" {
 variable "AMIS" {
   type = map(string)
   default = {
-   # us-east-1 = "ami-13be557e"
+    #us-east-1 = "ami-13be557e"
     us-east-1 = "ami-08f3d892de259504d"
     us-west-2 = "ami-06b94666"
     eu-west-1 = "ami-844e0bf7"
@@ -29,4 +29,16 @@ variable "AMIS" {
 # }
 
 #variable "INSTANCE_USERNAME" {
+#}
+
+variable "DB_NAME" {
+}
+
+variable "DB_USER" {
+}
+
+variable "DB_PASSWORD" {
+}
+
+#variable "DB_HOST" {
 #}
