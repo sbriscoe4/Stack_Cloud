@@ -5,3 +5,4 @@ DB_NAME="wordpressdb-tf"
 DB_USER="wordpressuser-tf"
 DB_PASSWORD="stackinc"
 #DB_HOST
+#RDS_ENDPOINT=""

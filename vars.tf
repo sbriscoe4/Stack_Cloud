@@ -1,6 +1,6 @@
 variable "AWS_ACCESS_KEY" {}
 
- variable "AWS_SECRET_KEY" {}
+variable "AWS_SECRET_KEY" {}
 
 
 variable "AWS_REGION" {
@@ -25,20 +25,20 @@ variable "AMIS" {
   }
 }
 
-# variable "RDS_PASSWORD" {
-# }
+# variable "RDS_PASSWORD" {}
 
-#variable "INSTANCE_USERNAME" {
-#}
+#variable "INSTANCE_USERNAME" {}
 
-variable "DB_NAME" {
+variable "DB_NAME" {}
+
+variable "DB_USER" {}
+
+variable "DB_PASSWORD" {}
+
+#variable "DB_HOST" {}
+
+variable "SUBNET_ID" {
+    default = "subnet-10e47f4f"
 }
 
-variable "DB_USER" {
-}
-
-variable "DB_PASSWORD" {
-}
-
-#variable "DB_HOST" {
-#}
+variable "RDS_ENDPOINT" {}
