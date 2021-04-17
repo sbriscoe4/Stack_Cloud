@@ -157,16 +157,61 @@ resource "aws_instance" "web" {
         Name = "wp_inst-tf"
     }
         
-    user_data = file("${path.module}/WordPressEFS.sh") 
+    #user_data = file("${path.module}/WordPressEFS.sh") 
+    user_data = templatefile("bootstrap.sh", {
+        efs_id       = aws_efs_file_system.efs.id,
+        REGION       = var.AWS_REGION,
+        DB_NAME      = var.DB_NAME,
+        DB_USER      = var.DB_USER,
+        DB_PASSWORD  = var.DB_PASSWORD,
+        RDS_ENDPOINT = var.RDS_ENDPOINT,
+        MOUNT_POINT  = "/var/www/html"
+    })
+} 
 
 /*
-    #user_data = data.template_file.bootstrap.rendered 
-    user_data = templatefile("bootstrap1.sh", {
-        efs_id= aws_efs_file_system.efs.id,
-        MOUNT_POINT= "/var/www/html"
-    }) 
+#s3 backend configuration for remote state
+terraform {
+    backend "s3"{
+        bucket= "stackbuckstate-shavon"
+        key= "terraform.tfstate"
+        region= "us-east-1"
+        dynamodb_table= "statelock1-tf"
+    }
+}
+*/
+/*
+## launch configureation
+resource "aws_launch_configuration" "wp_launch" {
+    name   = "wp_launch" 
+    image_id      = var.AMIS["us-east-1"]
+    instance_type = "t2.micro"
+    iam_instance_profile = aws_iam_instance_profile.s3_profile.name
+    key_name = "MyEC2KeyPair"
+    security_groups = [aws_security_group.stack_sg.name]
+    user_data = templatefile("WordPressEFS2.sh", {
+        efs_id       = aws_efs_file_system.efs.id,
+        REGION       = var.AWS_REGION,
+        DB_NAME      = var.DB_NAME,
+        DB_USER      = var.DB_USER,
+        DB_PASSWORD  = var.DB_PASSWORD,
+        RDS_ENDPOINT = var.RDS_ENDPOINT,
+        MOUNT_POINT  = "/var/www/html"
+    })
+} 
+
+## autoscaling group
+resource "aws_autoscaling_group" "wp_asg" {
+    name                 = "wp_asg"
+    launch_configuration = aws_launch_configuration.wp_launch.name
+    min_size             = 1
+    max_size             = 2
+    desired_capacity     = 1
+    vpc_zone_identifier  = ["subnet-10e47f4f"]
+}
 */
 
-}
+#autoscaling policy
+
 
 
