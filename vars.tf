@@ -42,3 +42,7 @@ variable "SUBNET_ID" {
 }
 
 variable "RDS_ENDPOINT" {}
+
+variable "MOUNT_POINT"{
+    default = "/var/www/html"
+}
