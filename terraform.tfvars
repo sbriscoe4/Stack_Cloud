@@ -5,4 +5,4 @@ DB_NAME="wordpress-db"
 DB_USER="wordpressuser"
 DB_PASSWORD="stackinc"
 #DB_HOST
-RDS_ENDPOINT="wordpressdb.cry0qltmnt03.us-east-1.rds.amazonaws.com"
+RDS_ENDPOINT="wordpressdb1.cry0qltmnt03.us-east-1.rds.amazonaws.com"

@@ -120,7 +120,7 @@ resource "aws_iam_instance_profile" "s3_profile" {
 resource "aws_efs_file_system" "efs" {
     creation_token = "stack_efs"
     encrypted = true
-    #throughput_mode = "bursting"
+    throughput_mode = "bursting"
     tags = {
         Name = "wp_efs-tf"
     }
@@ -157,15 +157,15 @@ resource "aws_instance" "web" {
         Name = "wp_inst-tf"
     }
         
-    #user_data = file("${path.module}/WordPressEFS.sh") 
-    user_data = templatefile("bootstrap.sh", {
+    #user_data = file("${path.module}/bootstrap.sh") 
+    user_data = templatefile("sheriff-boot.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
         DB_NAME      = var.DB_NAME,
         DB_USER      = var.DB_USER,
         DB_PASSWORD  = var.DB_PASSWORD,
         RDS_ENDPOINT = var.RDS_ENDPOINT,
-        MOUNT_POINT  = "/var/www/html"
+        MOUNT_POINT  = var.MOUNT_POINT
     })
 } 
 
@@ -212,6 +212,7 @@ resource "aws_autoscaling_group" "wp_asg" {
 */
 
 #autoscaling policy
+
 
 
 
