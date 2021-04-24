@@ -158,7 +158,7 @@ resource "aws_instance" "web" {
     }
         
     #user_data = file("${path.module}/bootstrap.sh") 
-    user_data = templatefile("sheriff-boot.sh", {
+    user_data = templatefile("bootstrap.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
         DB_NAME      = var.DB_NAME,

@@ -4,7 +4,7 @@ variable "AWS_SECRET_KEY" {}
 
 
 variable "AWS_REGION" {
-  default = "us-east-1"
+  default = "us-east-1"  
 }
 
 variable "PATH_TO_PRIVATE_KEY" {
@@ -45,4 +45,14 @@ variable "RDS_ENDPOINT" {}
 
 variable "MOUNT_POINT"{
     default = "/var/www/html"
+}
+
+variable "A_ZONE"{
+    type = map(string)
+    default = {
+      one = "us-east-1a"
+      two = "us-east-1c" 
+      three = "us-east-1c"
+      four = "us-east-1d"    
+    }
 }
