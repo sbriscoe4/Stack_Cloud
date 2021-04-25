@@ -1,46 +1,21 @@
 #!/bin/bash
-sudo exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-su root -
-#sudo yum update -y
+sudo yum update -y
+ebs_vol = "/dev/xvdb /dev/xvdc /dev/xvdd /dev/xvde"
 
 #partition ebs volume disks
-    sudo fdisk "/dev/sdb" <<EOT
-    n
-    p
-    1
-    
-    
-    w
+for var in ${ebs_vol}
+do 
+sudo fdisk $var <<EOT
+n
+P
+1
+2048
+16777215
+w
 EOT
-
-    sudo fdisk "/dev/sdc" <<EOT
-    n
-    p
-    1
-    
-    
-    w
-
-EOT
-
-    sudo fdisk "/dev/sdd" <<EOT
-    n
-    p
-    1
-    
-    
-    w
-EOT
-
-    sudo fdisk "/dev/sde" <<EOT
-    n
-    p
-    1
-    
-    
-    w
-EOT
+done
 
 #create disk lables
 sudo pvcreate /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
@@ -49,17 +24,17 @@ sudo pvcreate /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
 sudo vgcreate stack_vg /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
 
 #create logical volumses w/ 5g space
-    sudo lvcreate -L 5G -n Lv_u01 stack_vg
-    sudo lvcreate -L 5G -n Lv_u02 stack_vg
-    sudo lvcreate -L 5G -n Lv_u03 stack_vg
-    sudo lvcreate -L 5G -n Lv_u04 stack_vg
+sudo lvcreate -L 5G -n Lv_u01 stack_vg
+sudo lvcreate -L 5G -n Lv_u02 stack_vg
+sudo lvcreate -L 5G -n Lv_u03 stack_vg
+sudo lvcreate -L 5G -n Lv_u04 stack_vg
 
 
 #create file systems on logical volumes 
-    sudo mkfs.ext4 /dev/stack_vg/Lv_u01
-    sudo mkfs.ext4 /dev/stack_vg/Lv_u02
-    sudo mkfs.ext4 /dev/stack_vg/Lv_u03
-    sudo mkfs.ext4 /dev/stack_vg/Lv_u04
+sudo mkfs.ext4 /dev/stack_vg/Lv_u01
+sudo mkfs.ext4 /dev/stack_vg/Lv_u02
+sudo mkfs.ext4 /dev/stack_vg/Lv_u03
+sudo mkfs.ext4 /dev/stack_vg/Lv_u04
 
 
 #create mount points to hold the space for the logical volumnes
