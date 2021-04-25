@@ -168,7 +168,6 @@ resource "aws_instance" "web" {
         MOUNT_POINT  = var.MOUNT_POINT
     })
 } 
-
 /*
 #s3 backend configuration for remote state
 terraform {
@@ -179,7 +178,7 @@ terraform {
         dynamodb_table= "statelock1-tf"
     }
 }
-*/
+
 /*
 ## launch configureation
 resource "aws_launch_configuration" "wp_launch" {
