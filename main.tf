@@ -168,14 +168,14 @@ resource "aws_instance" "web" {
         MOUNT_POINT  = var.MOUNT_POINT
     })
 } 
-/*
+
 #s3 backend configuration for remote state
 terraform {
     backend "s3"{
         bucket= "stackbuckstate-shavon"
         key= "terraform.tfstate"
         region= "us-east-1"
-        dynamodb_table= "statelock1-tf"
+        dynamodb_table= "statelock-tf"
     }
 }
 
