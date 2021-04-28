@@ -29,11 +29,11 @@ variable "AMIS" {
 
 #variable "INSTANCE_USERNAME" {}
 
-variable "DB_NAME" {}
+#variable "DB_NAME" {}
 
-variable "DB_USER" {}
+#variable "DB_USER" {}
 
-variable "DB_PASSWORD" {}
+#variable "DB_PASSWORD" {}
 
 #variable "DB_HOST" {}
 
@@ -41,7 +41,7 @@ variable "SUBNET_ID" {
     default = "subnet-10e47f4f"
 }
 
-variable "RDS_ENDPOINT" {}
+#variable "RDS_ENDPOINT" {}
 
 variable "MOUNT_POINT"{
     default = "/var/www/html"

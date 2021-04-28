@@ -115,7 +115,7 @@ resource "aws_instance" "web" {
     tags = {
         Name = "ebs_inst-tf"
     }
-    user_data = file("EBS.sh") 
+    user_data = file("ebs/EBS.sh") 
 } 
 
 #attach EBS Volume 
