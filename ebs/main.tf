@@ -104,7 +104,7 @@ resource "aws_ebs_volume" "stackvol4" {
 }
 
 #create ec2 
-resource "aws_instance" "web" {
+resource "aws_instance" "web1" {
     ami           = "ami-0742b4e673072066f"
     instance_type = "t2.micro"
     #iam_instance_profile = aws_iam_instance_profile.s3_profile.name
@@ -115,7 +115,7 @@ resource "aws_instance" "web" {
     tags = {
         Name = "ebs_inst-tf"
     }
-    user_data = file("ebs/EBS.sh") 
+    user_data = file("ebs/bootstrap.sh") 
 } 
 
 #attach EBS Volume 
