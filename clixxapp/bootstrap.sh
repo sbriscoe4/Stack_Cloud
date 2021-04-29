@@ -30,13 +30,11 @@ cd /var/www/html
 wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz
 mkdir phpMyAdmin && tar -xvzf phpMyAdmin-latest-all-languages.tar.gz -C phpMyAdmin --strip-components 1
 rm phpMyAdmin-latest-all-languages.tar.gz
-aws s3 cp s3://stackwpshavon /var/www/html/ --recursive
-#aws s3 sync s3://stackwpshavon /var/www/html
-sudo systemctl start mariadb
+#aws s3 cp s3://stackwpshavon /var/www/html/ --recursive
+git clone https://github.com/stackitgit/CliXX_Retail_Repository.git
+cp -r CliXX_Retail_Repository/* /var/www/html
 sudo chkconfig httpd on
-sudo chkconfig mariadb on
 sudo systemctl status httpd
-sudo systemctl status mariadb
 #####INSTALL WORDPRESS####
 cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
 #cp -r wordpress/* /var/www/html/
