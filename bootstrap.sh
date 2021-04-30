@@ -31,12 +31,11 @@ wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz
 mkdir phpMyAdmin && tar -xvzf phpMyAdmin-latest-all-languages.tar.gz -C phpMyAdmin --strip-components 1
 rm phpMyAdmin-latest-all-languages.tar.gz
 aws s3 cp s3://stackwpshavon /var/www/html/ --recursive
-#aws s3 sync s3://stackwpshavon /var/www/html
-sudo systemctl start mariadb
+#sudo systemctl start mariadb
 sudo chkconfig httpd on
-sudo chkconfig mariadb on
+#sudo chkconfig mariadb on
 sudo systemctl status httpd
-sudo systemctl status mariadb
+#sudo systemctl status mariadb
 #####INSTALL WORDPRESS####
 cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
 #cp -r wordpress/* /var/www/html/
@@ -58,3 +57,9 @@ sudo systemctl status mariadb
 sudo systemctl start mariadb
 sudo systemctl status httpd
 sudo systemctl start httpd
+
+mysql -h wordpress-db.cry0qltmnt03.us-east-1.rds.amazonaws.com -D wordpress-db -u\wordpressuser -p\stackinc  <<EOT
+use wordpress-db;
+UPDATE wp_options SET option_value = "http://`curl http://169.254.169.254/latest/meta-data/public-ipv4`" WHERE option_value LIKE 'http%';
+commit;
+EOT
