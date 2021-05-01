@@ -62,9 +62,9 @@ pipeline {
 
                  //sh "returnStatus: true, script: 'terraform workspace new dev'"
 
-                 //sh "terraform apply -auto-approve"
+                 sh "terraform apply -auto-approve"
 
-                 sh "terraform apply  -input=false tfplan"
+                 //sh "terraform apply  -input=false tfplan"
 
                  //sh "terraform destroy -auto-approve"
 
