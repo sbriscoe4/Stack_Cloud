@@ -1,7 +1,7 @@
 #create security group
 resource "aws_security_group" "stack_sg"{
-    name="stack_sec_group"
-    description="stack sec group"
+    name="stack_sec_group1"
+    description="stack sec group1"
     vpc_id="vpc-8a258ef7"
 
     ingress{
@@ -112,7 +112,7 @@ resource "aws_iam_policy_attachment" "s3_attach" {
 
 # create ec2 instance profile with s3 role
 resource "aws_iam_instance_profile" "s3_profile" {
-    name = "s3_profile"
+    name = "s3_profile_tf"
     role = aws_iam_role.s3_role.name
 }
 
@@ -145,20 +145,36 @@ resource "null_resource" "configure_nfs" {
     }
 
 }
-
+/*
+#use the latest production snapshot to create a dev instance
+resource "aws_db_instance" "clixxintstf" {
+    instance_class = "db.t2.micro"
+    #engine = "mysql"
+    #name = "clixxinsttf"
+    snapshot_identifier = "clixxdbsnap"
+    username = "wordpressuser"
+    password = "W3lcome123"
+    skip_final_snapshot = true
+    vpc_security_group_ids = [aws_security_group.stack_sg.id]
+    #security_group_names = ["default"]
+    availability_zone = "us-east-1d"
+}
+*/
 #create ec2 
 resource "aws_instance" "web" {
     ami           = "ami-0742b4e673072066f"
     instance_type = "t2.micro"
     iam_instance_profile = aws_iam_instance_profile.s3_profile.name
     key_name = "MyEC2KeyPair"
-    security_groups = [aws_security_group.stack_sg.name]
+    #security_groups = [aws_security_group.stack_sg.name]
+    security_groups = [ "default" ]
+    #availability_zone = "us-east-1d"
     tags = {
         Name = "wp_inst-tf"
     }
         
     #user_data = file("${path.module}/bootstrap.sh") 
-    user_data = templatefile("bootstrap.sh", {
+    user_data = templatefile("bootstrap1.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
         DB_NAME      = var.DB_NAME,
@@ -167,6 +183,10 @@ resource "aws_instance" "web" {
         RDS_ENDPOINT = var.RDS_ENDPOINT,
         MOUNT_POINT  = var.MOUNT_POINT
     })
+
+   # depends_on = [
+   #     aws_db_instance.clixxintstf
+   # ] 
 } 
 
 #s3 backend configuration for remote state
