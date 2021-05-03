@@ -153,6 +153,7 @@ resource "aws_db_instance" "clixxinsttf" {
     password                 = "W3lcome123"
     vpc_security_group_ids   = [aws_security_group.stack_sg.id]
     skip_final_snapshot      = true
+    allocated_storage        = 10
     #security_group_names = ["default"]
     #availability_zone = "us-east-1d"
 }
