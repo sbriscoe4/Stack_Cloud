@@ -1,66 +1,66 @@
 #create security group
 resource "aws_security_group" "stack_sg"{
-    name="stack_sec_group1"
-    description="stack sec group1"
-    vpc_id="vpc-8a258ef7"
+    name        = "stack_sec_group1"
+    description = "stack sec group1"
+    vpc_id      = "vpc-8a258ef7"
 
     ingress{
-        description="HTTP"
-        from_port=80
-        to_port=80
-        protocol="tcp"
-        cidr_blocks=["0.0.0.0/0"]
+        description = "HTTP"
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
     }
 
     ingress{
-        description="SSH"
-        from_port=22
-        to_port=22
-        protocol="tcp"
-        cidr_blocks=["0.0.0.0/0"]
+        description = "SSH"
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
     }    
     
     ingress{
-        description="MYSQL/Aurora"
-        from_port=3306
-        to_port=3306
-        protocol="tcp"
-        cidr_blocks=["0.0.0.0/0"]
+        description = "MYSQL/Aurora"
+        from_port   = 3306
+        to_port     = 3306
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
     } 
 
     ingress{
         description="NFS"
-        from_port=2049
-        to_port=2049
-        protocol="tcp"
-        cidr_blocks=["0.0.0.0/0"]
+        from_port   = 2049
+        to_port     = 2049
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
     } 
 
     ingress{
-        description="Custom TCP"
-        from_port=8080
-        to_port=8080
-        protocol="tcp"
-        cidr_blocks=["0.0.0.0/0"]
+        description = "Custom TCP"
+        from_port   = 8080
+        to_port     = 8080
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
     } 
 
     ingress{
-        description="HTTPS"
-        from_port=443
-        to_port=443
-        protocol="tcp"
-        cidr_blocks=["0.0.0.0/0"]
+        description = "HTTPS"
+        from_port   = 443
+        to_port     = 443
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
     } 
 
     egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
     }
 
-    tags={
-        Name="stack_sec_group-tf"
+    tags = {
+        Name = "stack_sec_group-tf"
     }
 }
 
@@ -107,7 +107,7 @@ resource "aws_iam_role" "s3_role" {
 resource "aws_iam_policy_attachment" "s3_attach" {
     name       = "s3-attachment"
     policy_arn = aws_iam_policy.policy.arn
-    roles       =  [aws_iam_role.s3_role.name]
+    roles      =  [aws_iam_role.s3_role.name]
 } 
 
 # create ec2 instance profile with s3 role
@@ -118,8 +118,8 @@ resource "aws_iam_instance_profile" "s3_profile" {
 
 #create efs
 resource "aws_efs_file_system" "efs" {
-    creation_token = "stack_efs"
-    encrypted = true
+    creation_token  = "stack_efs"
+    encrypted       = true
     throughput_mode = "bursting"
     tags = {
         Name = "wp_efs-tf"
@@ -129,8 +129,8 @@ resource "aws_efs_file_system" "efs" {
 #creating Mount target of EFS
 resource "aws_efs_mount_target" "mount" {
     depends_on = [aws_efs_file_system.efs]
-    file_system_id = aws_efs_file_system.efs.id
-    subnet_id      = "subnet-10e47f4f" #aws_instance.web.subnet_id
+    file_system_id  = aws_efs_file_system.efs.id
+    subnet_id       = "subnet-10e47f4f" #aws_instance.web.subnet_id
     security_groups = [aws_security_group.stack_sg.id]
 }
 
@@ -138,28 +138,25 @@ resource "aws_efs_mount_target" "mount" {
 resource "null_resource" "configure_nfs" {
     depends_on = [aws_efs_mount_target.mount]
     connection {
-        type     = "ssh"
-        user     = "ec2-user"
+        type        = "ssh"
+        user        = "ec2-user"
         private_key = tls_private_key.my_key.private_key_pem
-        host     = aws_instance.web.public_ip
+        host        = aws_instance.web.public_ip
     }
 
 }
-/*
-#use the latest production snapshot to create a dev instance
-resource "aws_db_instance" "clixxintstf" {
-    instance_class = "db.t2.micro"
-    #engine = "mysql"
-    #name = "clixxinsttf"
-    snapshot_identifier = "clixxdbsnap"
-    username = "wordpressuser"
-    password = "W3lcome123"
-    skip_final_snapshot = true
-    vpc_security_group_ids = [aws_security_group.stack_sg.id]
+
+resource "aws_db_instance" "clixxinsttf" {
+    identifier = "wordpressdbclixx"
+    instance_class           = "db.t2.micro"
+    username                 = "wordpressuser"
+    password                 = "W3lcome123"
+    vpc_security_group_ids   = [aws_security_group.stack_sg.id]
+    skip_final_snapshot      = true
     #security_group_names = ["default"]
-    availability_zone = "us-east-1d"
+    #availability_zone = "us-east-1d"
 }
-*/
+
 #create ec2 
 resource "aws_instance" "web" {
     ami           = "ami-0742b4e673072066f"
@@ -180,13 +177,13 @@ resource "aws_instance" "web" {
         DB_NAME      = var.DB_NAME,
         DB_USER      = var.DB_USER,
         DB_PASSWORD  = var.DB_PASSWORD,
-        RDS_ENDPOINT = var.RDS_ENDPOINT,
+        RDS_ENDPOINT = aws_db_instance.clixxinsttf.address,
         MOUNT_POINT  = var.MOUNT_POINT
     })
 
-   # depends_on = [
-   #     aws_db_instance.clixxintstf
-   # ] 
+    #depends_on = [
+    #    aws_db_instance.clixxintstf
+    #] 
 } 
 
 #s3 backend configuration for remote state

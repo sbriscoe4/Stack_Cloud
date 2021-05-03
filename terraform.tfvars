@@ -5,4 +5,4 @@ DB_NAME="wordpressdb"
 DB_USER="wordpressuser"
 DB_PASSWORD="W3lcome123"
 #DB_HOST
-RDS_ENDPOINT="wordpress-db.cry0qltmnt03.us-east-1.rds.amazonaws.com"
+#RDS_ENDPOINT= aws_db_instance.clixxinsttf.address

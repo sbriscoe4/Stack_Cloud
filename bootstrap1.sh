@@ -58,8 +58,8 @@ sudo systemctl start mariadb
 sudo systemctl status httpd
 sudo systemctl start httpd
 
-#mysql -h wordpress-db.cry0qltmnt03.us-east-1.rds.amazonaws.com -D wordpress-db -u\wordpressuser -p\stackinc  <<EOT
-#use wordpress-db;
-#UPDATE wp_options SET option_value = "http://`curl http://169.254.169.254/latest/meta-data/public-ipv4`" WHERE option_value LIKE 'http%';
-#commit;
-#EOT
+mysql -h ${RDS_ENDPOINT} -D ${DB_NAME} -u\${DB_USER} -p\${DB_PASSWORD} <<EOT
+use wordpressdb;
+UPDATE wp_options SET option_value = "http://`curl http://169.254.169.254/latest/meta-data/public-ipv4`" WHERE option_value LIKE 'http%';
+commit;
+EOT
