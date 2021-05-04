@@ -56,3 +56,7 @@ variable "A_ZONE"{
       four = "us-east-1d"    
     }
 }
+
+variable "vpc_cidr_block" {
+    default = "255.255.255.224/27"
+}
