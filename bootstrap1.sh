@@ -58,7 +58,7 @@ sudo systemctl start mariadb
 sudo systemctl status httpd
 sudo systemctl start httpd
 
-mysql -h ${RDS_ENDPOINT} -D ${DB_NAME} -u\${DB_USER} -p\${DB_PASSWORD} <<EOT
+mysql -h ${RDS_ENDPOINT} -D ${DB_NAME} -u ${DB_USER} -p ${DB_PASSWORD} <<EOT
 use wordpressdb;
 UPDATE wp_options SET option_value = "http://`curl http://169.254.169.254/latest/meta-data/public-ipv4`" WHERE option_value LIKE 'http%';
 commit;
