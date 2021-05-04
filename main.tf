@@ -128,7 +128,7 @@ resource "aws_efs_file_system" "efs" {
 
 #creating Mount target of EFS
 resource "aws_efs_mount_target" "mount" {
-    depends_on = [aws_efs_file_system.efs]
+    depends_on      = [aws_efs_file_system.efs]
     file_system_id  = aws_efs_file_system.efs.id
     subnet_id       = "subnet-10e47f4f" #aws_instance.web.subnet_id
     security_groups = [aws_security_group.stack_sg.id]
@@ -136,7 +136,7 @@ resource "aws_efs_mount_target" "mount" {
 
 #creating Mount Point for EFS
 resource "null_resource" "configure_nfs" {
-    depends_on = [aws_efs_mount_target.mount]
+    depends_on      = [aws_efs_mount_target.mount]
     connection {
         type        = "ssh"
         user        = "ec2-user"
@@ -147,33 +147,30 @@ resource "null_resource" "configure_nfs" {
 }
 
 resource "aws_db_instance" "clixxinsttf" {
-    identifier = "wordpressdbclixx"
+    identifier               = "wordpressdbclixx"
     instance_class           = "db.t2.micro"
     username                 = "wordpressuser"
     password                 = "W3lcome123"
     snapshot_identifier      = "clixxdbsnap"
     vpc_security_group_ids   = [aws_security_group.stack_sg.id]
     skip_final_snapshot      = true
-    #allocated_storage        = 10
-    #engine                   = "mysql" 
-    #security_group_names = ["default"]
-    availability_zone = "us-east-1d"
+    availability_zone        = "us-east-1d"
 }
 
 #create ec2 
 resource "aws_instance" "web" {
-    ami           = "ami-0742b4e673072066f"
-    instance_type = "t2.micro"
+    ami             = "ami-0742b4e673072066f"
+    instance_type   = "t2.micro"
     iam_instance_profile = aws_iam_instance_profile.s3_profile.name
-    key_name = "MyEC2KeyPair"
+    key_name        = "MyEC2KeyPair"
     security_groups = [aws_security_group.stack_sg.name]
-    #security_groups = [ "default" ]
     availability_zone = "us-east-1d"
     tags = {
         Name = "wp_inst-tf"
     }
         
     #user_data = file("${path.module}/bootstrap.sh") 
+    depends_on = [aws_db_instance.clixxinsttf] 
     user_data = templatefile("bootstrap1.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
@@ -183,19 +180,15 @@ resource "aws_instance" "web" {
         RDS_ENDPOINT = aws_db_instance.clixxinsttf.address,
         MOUNT_POINT  = var.MOUNT_POINT
     })
-
-    depends_on = [
-        aws_db_instance.clixxinsttf
-    ] 
 }
 
 #s3 backend configuration for remote state
 terraform {
     backend "s3"{
-        bucket= "stackbuckstate-shavon"
-        key= "terraform.tfstate"
-        region= "us-east-1"
-        dynamodb_table= "statelock-tf"
+        bucket  = "stackbuckstate-shavon"
+        key     = "terraform.tfstate"
+        region  = "us-east-1"
+        dynamodb_table = "statelock-tf"
     }
 }
 
