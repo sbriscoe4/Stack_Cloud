@@ -151,11 +151,13 @@ resource "aws_db_instance" "clixxinsttf" {
     instance_class           = "db.t2.micro"
     username                 = "wordpressuser"
     password                 = "W3lcome123"
+    snapshot_identifier      = "clixxdbsnap"
     vpc_security_group_ids   = [aws_security_group.stack_sg.id]
     skip_final_snapshot      = true
-    allocated_storage        = 10
+    #allocated_storage        = 10
+    #engine                   = "mysql" 
     #security_group_names = ["default"]
-    #availability_zone = "us-east-1d"
+    availability_zone = "us-east-1d"
 }
 
 #create ec2 
@@ -164,9 +166,9 @@ resource "aws_instance" "web" {
     instance_type = "t2.micro"
     iam_instance_profile = aws_iam_instance_profile.s3_profile.name
     key_name = "MyEC2KeyPair"
-    #security_groups = [aws_security_group.stack_sg.name]
-    security_groups = [ "default" ]
-    #availability_zone = "us-east-1d"
+    security_groups = [aws_security_group.stack_sg.name]
+    #security_groups = [ "default" ]
+    availability_zone = "us-east-1d"
     tags = {
         Name = "wp_inst-tf"
     }
@@ -182,10 +184,10 @@ resource "aws_instance" "web" {
         MOUNT_POINT  = var.MOUNT_POINT
     })
 
-    #depends_on = [
-    #    aws_db_instance.clixxintstf
-    #] 
-} 
+    depends_on = [
+        aws_db_instance.clixxinsttf
+    ] 
+}
 
 #s3 backend configuration for remote state
 terraform {
