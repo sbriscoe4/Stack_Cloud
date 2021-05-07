@@ -32,9 +32,9 @@ pipeline {
 
                  //sh "returnStatus: true, script: 'terraform workspace new dev'"
 
-                 //sh "terraform apply -auto-approve"
+                 sh "terraform apply -auto-approve"
 
-                 sh "terraform plan -out=tfplan -input=false"
+                 //sh "terraform plan -out=tfplan -input=false"
 
                  
 
