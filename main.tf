@@ -112,7 +112,7 @@ resource "aws_iam_policy_attachment" "s3_attach" {
 
 # create ec2 instance profile with s3 role
 resource "aws_iam_instance_profile" "s3_profile" {
-    name = "s3_profile_tf"
+    name = "s3_profile_tf1"
     role = aws_iam_role.s3_role.name
 }
 
@@ -146,8 +146,8 @@ resource "null_resource" "configure_nfs" {
 
 }
 
-resource "aws_db_instance" "clixxinsttf1" {
-    identifier               = "wordpressdbclixx"
+resource "aws_db_instance" "clixxinsttf" {
+    identifier               = "wordpressdbclixxtf"
     instance_class           = "db.t2.micro"
     username                 = "wordpressuser"
     password                 = "W3lcome123"
@@ -170,14 +170,14 @@ resource "aws_instance" "web" {
     }
         
     #user_data = file("${path.module}/bootstrap.sh") 
-    depends_on = [aws_db_instance.clixxinsttf1] 
+    depends_on = [aws_db_instance.clixxinsttf] 
     user_data = templatefile("bootstrap1.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
         DB_NAME      = var.DB_NAME,
         DB_USER      = var.DB_USER,
         DB_PASSWORD  = var.DB_PASSWORD,
-        RDS_ENDPOINT = aws_db_instance.clixxinsttf1.address,
+        RDS_ENDPOINT = aws_db_instance.clixxinsttf.address,
         MOUNT_POINT  = var.MOUNT_POINT
     })
 }
@@ -185,7 +185,7 @@ resource "aws_instance" "web" {
 #s3 backend configuration for remote state
 terraform {
     backend "s3"{
-        bucket  = "stackbuckstate-shavon"
+        bucket  = "stackbuckstate-shavon1"
         key     = "terraform.tfstate"
         region  = "us-east-1"
         dynamodb_table = "statelock-tf"
