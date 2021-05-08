@@ -171,7 +171,7 @@ resource "aws_instance" "web" {
         
     #user_data = file("${path.module}/bootstrap.sh") 
     depends_on = [aws_db_instance.clixxinsttf] 
-    user_data = templatefile("bootstrap1.sh", {
+    user_data = templatefile("bootstrap4.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
         DB_NAME      = var.DB_NAME,
