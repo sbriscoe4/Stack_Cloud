@@ -64,9 +64,9 @@ pipeline {
 
                  //sh "terraform apply -auto-approve"
 
-                 sh "terraform apply  -input=false tfplan"
+                 //sh "terraform apply  -input=false tfplan"
 
-                 //sh "terraform destroy -input=false -auto-approve"
+                 sh "terraform destroy -input=false -auto-approve"
 
              }
 
