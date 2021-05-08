@@ -118,7 +118,7 @@ resource "aws_iam_instance_profile" "s3_profile" {
 
 #create efs
 resource "aws_efs_file_system" "efs" {
-    creation_token  = "stack_efs"
+    creation_token  = "stack_efs_tf"
     encrypted       = true
     throughput_mode = "bursting"
     tags = {
