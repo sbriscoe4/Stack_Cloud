@@ -1,7 +1,7 @@
 #create security group
 resource "aws_security_group" "stack_sg"{
-    name        = "stack_sec_group1"
-    description = "stack sec group1"
+    name        = "stack_sec_group_tf"
+    description = "stack sec group4"
     vpc_id      = "vpc-8a258ef7"
 
     ingress{
@@ -66,7 +66,7 @@ resource "aws_security_group" "stack_sg"{
 
 #create s3 policy
 resource "aws_iam_policy" "policy" {
-    name        = "s3_policy"
+    name        = "s3_policy_tf"
     description = "s3 admin access policy"
 
     policy = <<EOF
@@ -85,7 +85,7 @@ resource "aws_iam_policy" "policy" {
 
 #create role 
 resource "aws_iam_role" "s3_role" {
-    name = "s3-role"
+    name = "s3-role_tf"
     assume_role_policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -105,7 +105,7 @@ resource "aws_iam_role" "s3_role" {
 
 #attach s3 policy to role
 resource "aws_iam_policy_attachment" "s3_attach" {
-    name       = "s3-attachment"
+    name       = "s3-attachment_tf"
     policy_arn = aws_iam_policy.policy.arn
     roles      =  [aws_iam_role.s3_role.name]
 } 
@@ -122,7 +122,7 @@ resource "aws_efs_file_system" "efs" {
     encrypted       = true
     throughput_mode = "bursting"
     tags = {
-        Name = "wp_efs-tf"
+        Name = "wp_efs_tf"
     }
 }
 
@@ -146,7 +146,7 @@ resource "null_resource" "configure_nfs" {
 
 }
 
-resource "aws_db_instance" "clixxinsttf" {
+resource "aws_db_instance" "clixxinsttf1" {
     identifier               = "wordpressdbclixx"
     instance_class           = "db.t2.micro"
     username                 = "wordpressuser"
@@ -166,18 +166,18 @@ resource "aws_instance" "web" {
     security_groups = [aws_security_group.stack_sg.name]
     availability_zone = "us-east-1d"
     tags = {
-        Name = "wp_inst-tf"
+        Name = "wp_inst_tf"
     }
         
     #user_data = file("${path.module}/bootstrap.sh") 
-    depends_on = [aws_db_instance.clixxinsttf] 
+    depends_on = [aws_db_instance.clixxinsttf1] 
     user_data = templatefile("bootstrap1.sh", {
         efs_id       = aws_efs_file_system.efs.id,
         REGION       = var.AWS_REGION,
         DB_NAME      = var.DB_NAME,
         DB_USER      = var.DB_USER,
         DB_PASSWORD  = var.DB_PASSWORD,
-        RDS_ENDPOINT = aws_db_instance.clixxinsttf.address,
+        RDS_ENDPOINT = aws_db_instance.clixxinsttf1.address,
         MOUNT_POINT  = var.MOUNT_POINT
     })
 }
