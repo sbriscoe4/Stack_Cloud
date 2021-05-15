@@ -43,9 +43,7 @@ variable "SUBNET_ID" {
 
 #variable "RDS_ENDPOINT" {}
 
-variable "MOUNT_POINT"{
-    default = "/var/www/html"
-}
+variable "MOUNT_POINT"{default = "/var/www/html"} 
 
 variable "A_ZONE"{
     type = map(string)
@@ -57,6 +55,9 @@ variable "A_ZONE"{
     }
 }
 
-variable "vpc_cidr_block" {
-    default = "255.255.255.224/27"
-}
+# cidr allowing 32 hosts
+variable "vpc_cidr1" {default = "10.0.0.0/16"}
+
+variable "AZ1" {default = "us-east-1a"}
+
+variable "AZ2" {default = "us-east-1b"}
