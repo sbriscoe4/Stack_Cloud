@@ -11,11 +11,6 @@ resource "aws_vpc" "clixxvpc" {
     }
 }
 
-## create for each loop for subnets
-#resource "aws_subnet" "bastionsub" {
-#    for_each = [  ]
-#}
-
 # pub. sub for bastion sever
 resource "aws_subnet" "bastionsub" {
     vpc_id            = aws_vpc.clixxvpc.id
@@ -285,33 +280,6 @@ resource "aws_security_group" "orasg_allow_publicsg"{
     }
 }
 
-/*
-### create subnet in 2 availability zones
-resource "aws_subnet" "subnetA" {
-    vpc_id = aws_vpc.clixxvpc.id
-    availability_zone = var.AZ1
-    for_each = { 
-        "bastionsub" = "10.0.0.0/24"
-        "appsub1"    = "10.0.2.0/24" 
-        "rdssub1"    = "10.0.4.0/26" 
-        "orasub1"    = "10.0.6.0/24"
-    }
-    cidr_block = each.value
-}
-
-resource "aws_subnet" "subnetB" {
-    vpc_id = aws_vpc.clixxvpc.id
-    availability_zone = var.AZ2
-    for_each = { 
-        "pubsub" = "10.0.1.0/24"
-        "appsub2"    = "10.0.3.0/24" 
-        "rdssub2"    = "10.0.5.0/26" 
-        "orasub2"    = "10.0.7.0/24"
-    }
-    cidr_block = each.value
-}
-*/
-
 # create internet gateway for the public subnet
 resource "aws_internet_gateway" "ig" {
     vpc_id = aws_vpc.clixxvpc.id
@@ -327,7 +295,7 @@ resource "aws_route_table" "custome_route_table" {
     }
 
     tags = {
-    Name = "custome_route_table"
+    Name = "custome_route_tabletf"
     }
 }
 
@@ -363,11 +331,11 @@ resource "aws_route_table" "main_route_table" {
     }
 
     tags = {
-    Name = "main_route_table"
+    Name = "main_route_tabletf"
     }
 }
 
-# associate nat to priv app subnet
+# associate nat (main rout table) to priv app subnet
 resource "aws_route_table_association" "attach_priv" {
     for_each = {
         sub1 = aws_subnet.appsub1.id
@@ -381,7 +349,7 @@ resource "aws_route_table_association" "attach_priv" {
     subnet_id      = each.value
 }
 
-#load balancer
+# create load balancer
 resource "aws_alb" "clixxalb" {
     name               = "clixxvpcalbtf"
     internal           = false
@@ -396,7 +364,7 @@ resource "aws_alb" "clixxalb" {
     }
 }
 
-#target group
+# create target group
 resource "aws_lb_target_group" "clixxtg" {
     name     = "clixxvpc-alb-tg"
     port     = 80
@@ -408,6 +376,7 @@ resource "aws_lb_target_group" "clixxtg" {
     }
 }
 
+# create listener
 resource "aws_lb_listener" "clixxlistener" {
     load_balancer_arn = aws_alb.clixxalb.arn
     port              = "80"
@@ -421,15 +390,25 @@ resource "aws_lb_listener" "clixxlistener" {
 
 # restore snapshot - create db from snapshot
 resource "aws_db_instance" "clixxdbinsttf" {
-    identifier               = "clixxvpctf"
+    identifier               = "clixxdbrestoretf"
     instance_class           = "db.t2.micro"
     db_subnet_group_name     = aws_db_subnet_group.rdssubnetgroup.id
-    username                 = "wordpressuser"
-    password                 = "W3lcome123"
+    username                 = local.db_creds.username
+    password                 = local.db_creds.password
     snapshot_identifier      = "clixxdbsnap"
     vpc_security_group_ids   = [aws_security_group.rdssg_tf.id]
     skip_final_snapshot      = true
     availability_zone        = var.AZ1
+}
+
+data "aws_secretsmanager_secret_version" "creds" {
+  # Fill in the name you gave to your secret
+  secret_id = "creds"
+}
+locals {
+  db_creds = jsondecode(
+    data.aws_secretsmanager_secret_version.creds.secret_string
+  )
 }
 
 # rds subnet group - allows db to reside in 2 AZs
