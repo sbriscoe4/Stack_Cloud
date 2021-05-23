@@ -405,6 +405,7 @@ data "aws_secretsmanager_secret_version" "creds" {
     # Fill in the name you gave to your secret
     secret_id = "creds"
 }
+
 locals {
     db_creds = jsondecode(
     data.aws_secretsmanager_secret_version.creds.secret_string
@@ -439,7 +440,8 @@ resource "aws_instance" "bastion" {
 # configure launch configuration for app server asg
 resource "aws_launch_configuration" "clixxvpc_launch" {
     name   = "clixxvpc_launchtf" 
-    image_id      = var.AMIS["us-east-1"]
+    #image_id      = var.AMIS["us-east-1"]
+    image_id      = data.aws_ami.stack.id
     instance_type = "t2.micro"
     #iam_instance_profile = aws_iam_instance_profile.s3_profile.name
     #tls_private_key = "MyEC2KeyPair_Priv"
@@ -462,6 +464,14 @@ resource "aws_launch_configuration" "clixxvpc_launch" {
     #create_before_destroy = true
     #}
 } 
+
+data "aws_ami" "stack" {
+    owners     = ["self"]
+    filter {
+    name   = "name"
+    values = ["ami-stack-1.0"]
+    }
+}
 
 ## autoscaling group
 resource "aws_autoscaling_group" "clixxvpc_asg" {
